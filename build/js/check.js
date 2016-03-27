@@ -1,30 +1,41 @@
-var a;
-var b;
-var arr; 
-function getMessage() {
- 	
-	if (a == true) {
-	  return 'Я попал в ' + b;
-	} else {
-	  return 'Я никуда не попал';
-	}
+var messages = {
+	miss:   'Я никуда не попал',
+  hit:    'Я попал в {b}',
+  jumped: 'Я прыгнул на {value} сантиметров'
+};
 
-	if (isFinite(a)) {
-		return 'Я прыгнул на ' + a*100 + ' сантиметров';
+export function getMessage(a, b) {
+ 	if (typeof a === 'boolean') {
+    if (a) {
+      return messages.replace('{b}', b);
+    }
+    
+    return messages.miss;
+  }
+
+	if (isNumber(a)) {
+		return messages.jumped.replace('{value}', a*100);
 	}
 
 	if (Array.isArray(a)) {
-			var result = a.reduce(function(sum, current) {
-	    return sum + current;
-			}, 0);
-		}
-
-	if (Array.isArray(a) && Array.isArray(b)) {
-		for (i = 0; i < arr.length; i++) {
-			arr = a[i]*b[i];
-		}
-		return arr;	 
+  	if (Array.isArray(b)) {
+    	return calcSumOfMultiply();	 
+    }
+    
+		let result = calcSumOfItems(a);
+    return '';
 	}
+}
+
+function calcSumOfItems(array:Array):nu {
+	return array.reduce();
+}
+
+function calcSumOfMultiply() {
+	for (i = 0; i < a.length; i++) {
+		let Multiply = a[i]*b[i];
+	}
+	return Multiply;
 }
 
 getMessage();
