@@ -2,8 +2,8 @@ var messages = {
   miss:   'Я никуда не попал',
   hit:    'Я попал в {b}',
   jumped: 'Я прыгнул на {value} сантиметров',
-  sum:    'Я прошел {meter} шагов',
-  step:   'Я прошел {pace} метров'
+  sum:    'Я прошёл {meter} шагов',
+  step:   'Я прошёл {pace} метров'
 };
 
 function getMessage(a, b) {
@@ -29,7 +29,7 @@ function getMessage(a, b) {
 }
 
 function isNumber(a) {
-  return isFinite(a);
+  return !isNaN(parseFloat(a)) && isFinite(a);
 }
 
 function calcSumOfItems(a) {
