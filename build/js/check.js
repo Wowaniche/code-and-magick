@@ -1,41 +1,49 @@
 var messages = {
-	miss:   'Я никуда не попал',
+  miss:   'Я никуда не попал',
   hit:    'Я попал в {b}',
   jumped: 'Я прыгнул на {value} сантиметров'
 };
 
-export function getMessage(a, b) {
- 	if (typeof a === 'boolean') {
+function getMessage(a, b) {
+  if (typeof a === 'boolean') {
     if (a) {
       return messages.replace('{b}', b);
     }
     
     return messages.miss;
   }
+  
+  if (isNumber(a)) { 
+    return messages.jumped.replace('{value}', a*100);
+  }
 
-	if (isNumber(a)) {
-		return messages.jumped.replace('{value}', a*100);
-	}
-
-	if (Array.isArray(a)) {
-  	if (Array.isArray(b)) {
-    	return calcSumOfMultiply();	 
+  if (Array.isArray(a)) {
+    if (Array.isArray(b)) {
+      return calcSumOfMultiply();
     }
-    
-		let result = calcSumOfItems(a);
-    return '';
-	}
+
+    let result = calcSumOfItems();
+  }
 }
 
-function calcSumOfItems(array:Array):nu {
-	return array.reduce();
+function isNumber(a) {
+  return isFinite(a);
+}
+
+function calcSumOfItems() {
+  return a.reduce(function(first, current) {
+    return first + current;
+  }, 0);
 }
 
 function calcSumOfMultiply() {
-	for (i = 0; i < a.length; i++) {
-		let Multiply = a[i]*b[i];
-	}
-	return Multiply;
+  var multiply;
+  for (i = 0; i < a.length; i++) {
+    multiply = a[i]*b[i];
+  }
+  return multiply;
 }
 
-getMessage();
+getMessage(20, 24);
+getMessage([20, 23], 123);
+getMessage([20, 23], [24, 32, 3]);
