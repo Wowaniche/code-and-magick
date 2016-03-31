@@ -1,6 +1,8 @@
 'use strict';
 
 (function() {
+
+  var messageVerdict = ['Вы выиграли.Пробел для рестарта.', 'Вы проиграли.Пробел для рестарта.', 'Пауза.Нажмите пробел для продолжения.', 'Для начала игры нажмите пробел.'];
   /**
    * @const
    * @type {number}
@@ -377,19 +379,50 @@
     /**
      * Отрисовка экрана паузы.
      */
+     /**
+      * @param {number} coordinateX
+      * @param {number} coordinateY
+      * @param {Canvas2DRenderingContext} ctx 
+      */ 
+    _popMessage: function(coordinateX, coordinateY, ctx, word) {
+      ctx.fillStyle = 'white';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(coordinateX*180, coordinateY*100 );
+      ctx.lineTo(coordinateX*170, coordinateY*200 );
+      ctx.lineTo(coordinateX*560, coordinateY*220 );
+      ctx.lineTo(coordinateX*550, coordinateY*90 );
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = '16px PT Mono';
+      ctx.fillStyle = 'black';
+      if(word == 'win') {
+        return ctx.fillText(messageVerdict[0], 210, 150);
+      } else if(word == 'fail') {
+          return ctx.fillText(messageVerdict[1], 210, 150);
+      } else if(word == 'pause') {
+          return ctx.fillText(messageVerdict[2], 190, 150);
+      } else if(word == 'intro') {
+          return ctx.fillText(messageVerdict[3], 210, 150);
+      }
+    },
+    /**
+     * Отрисовка экрана паузы.
+     */
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this._popMessage(1, 1, this.ctx, 'win');
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this._popMessage(1, 1, this.ctx, 'fail');
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this._popMessage(1, 1, this.ctx, 'pause');
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this._popMessage(1, 1, this.ctx, 'intro');
           break;
       }
     },
