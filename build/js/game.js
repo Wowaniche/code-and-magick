@@ -2,7 +2,12 @@
 
 (function() {
 
-  var messageVerdict = ['Вы выиграли.Пробел для рестарта.', 'Вы проиграли.Пробел для рестарта.', 'Пауза.Нажмите пробел для продолжения.', 'Для начала игры нажмите пробел.'];
+  var messageVerdict = {
+    win:   'Вы выиграли.Пробел для рестарта.',
+    fail:  'Вы проиграли.Пробел для рестарта.', 
+    pause: 'Пауза.Нажмите пробел для продолжения.',
+    intro: 'Для начала игры нажмите пробел.'
+  };
   /**
    * @const
    * @type {number}
@@ -382,9 +387,10 @@
      /**
       * @param {number} coordinateX
       * @param {number} coordinateY
-      * @param {Canvas2DRenderingContext} ctx 
+      * @param {Canvas2DRenderingContext} ctx
+      * @param {string} Verdict  
       */ 
-    _popMessage: function(coordinateX, coordinateY, ctx, word) {
+    _popMessage: function(coordinateX, coordinateY, ctx, Verdict) {
       ctx.fillStyle = 'white';
       ctx.lineWidth = 5;
       ctx.beginPath();
@@ -397,14 +403,19 @@
       ctx.stroke();
       ctx.font = '16px PT Mono';
       ctx.fillStyle = 'black';
-      if(word == 'win') {
-        return ctx.fillText(messageVerdict[0], 210, 150);
-      } else if(word == 'fail') {
-          return ctx.fillText(messageVerdict[1], 210, 150);
-      } else if(word == 'pause') {
-          return ctx.fillText(messageVerdict[2], 190, 150);
-      } else if(word == 'intro') {
-          return ctx.fillText(messageVerdict[3], 210, 150);
+      switch (typeof Verdict === 'string') {
+        case Verdict == 'win': 
+          ctx.fillText(messageVerdict.win, 210, 150)
+          break;
+        case Verdict == 'fail':
+          ctx.fillText(messageVerdict.fail, 210, 150)
+          break;
+        case Verdict == 'pause':
+          ctx.fillText(messageVerdict.pause, 190, 150)
+          break;
+        case Verdict == 'intro':
+          ctx.fillText(messageVerdict.intro, 210, 150)
+          break; 
       }
     },
     /**
