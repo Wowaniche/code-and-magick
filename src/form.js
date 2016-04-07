@@ -12,7 +12,7 @@
   var formReviewMarkFive = document.querySelector('.review-mark-label-5');
   var formFieldText = document.querySelector('.review-form-field-text');
   var formReviewSubmit = document.querySelector('.review-submit');
-  
+  var cookies = require('browser-cookies');
 
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
@@ -48,16 +48,49 @@
     formFieldText.classList.remove('require');
   };
 
-  formReviewSubmit.onsubmit = function() {
-    if(formFieldName == '') {
+  var mark = formReviewMarkOne.onclick() ||
+             formReviewMarkTwo.onclick() ||
+             formReviewMarkThree.onclick() ||
+             formReviewMarkFour.onclick() ||
+             formReviewMarkFive.onclick();
+
+  var name = formFieldName;
+
+  function calcDayToTheBirthday() {
+    var days;
+
+    days = new Date(2016, 9, 9).valueOf() - Date.now();
+    if(days <= 0) {
+      for (var n = 2017; n < 3000; n++) {
+        days = (new Date(n, 9, 9).valueOf()) - Date.now();
+      }
+    }
+    return days;
+  }
+
+  formReviewSubmit.onsubmit = function(evt) {
+    evt.preventDefault();
+
+    cookies.set('mark', mark, {
+      expires: Date.now() + calcDayToTheBirthday()
+    });
+    cookies.set('name', name, {
+      expires: Date.now() + calcDayToTheBirthday()
+    });
+
+    if(formFieldName === '') {
       return false;
-    } else if(formReviewMarkOne.onclick || formReviewMarkTwo.onclick) {
-        if(formFieldText == '') {
-          return false;
-        }
-    } else return true;
+    } else if(formReviewMarkOne.onclick() || formReviewMarkTwo.onclick()) {
+      if(formFieldText === '') {
+        return false;
+      }
+    } else {
+      return true;
+    }
+
+    return formReviewSubmit.onsubmit();
   };
 
 })();
 
-  
+
