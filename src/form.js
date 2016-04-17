@@ -53,18 +53,18 @@
   function checkRemainedRequiredFields() {
     var name = formFieldName.value;
     var text = formFieldText.value;
-    var isNameValid = name != 0;
-    var isTextValid = text != 0;
+    var isNameValid = name === '';
+    var isTextValid = text === '';
 
-    if (isNameValid) {
+    if (!isNameValid) {
       formReviewFieldsName.setAttribute('hidden', true);
     }
 
-    if (isTextValid) {
+    if (!isTextValid) {
       formReviewFieldsText.setAttribute('hidden', true);
     }
 
-    if (!isNameValid && !isTextValid) {
+    if (isNameValid && isTextValid) {
       formReviewFieldsName.removeAttribute('hidden', true);
       formReviewFieldsText.removeAttribute('hidden', true);
     }
