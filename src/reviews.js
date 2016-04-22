@@ -32,10 +32,6 @@ var Filter = {
 };
 
 
-/** @constant {string} */
-var ACTIVE_FILTER_CLASSNAME = 'hotel-filter-active';
-
-
 /**
  * @param {Object} data
  * @param {HTMLElement} container
@@ -82,7 +78,7 @@ var renderReviews = function(reviews) {
 };
 
 /**
- * @param {Array.<Object>} hotels
+ * @param {Array.<Object>} reviews
  * @param {string} filter
  */
 var getFilteredReviews = function(reviews, filter) {
@@ -97,20 +93,20 @@ var getFilteredReviews = function(reviews, filter) {
     case Filter.GOOD:
       reviewsToFilter = reviewsToFilter
         .filter(function(item) {
-          return item.rating >= 3;
+          return item.rating > 2;
         })
         .sort(function(a, b) {
-          return b.rating > a.rating;
+          return b.rating - a.rating;
         });
       break;
     case Filter.BAD:
-      reviewsToFilter.sort(function(a, b) {
-        if(a.rating < 3 && b.rating < 3) {
-          var sortBadRating = a.rating - b.rating;
-        }
-
-        return sortBadRating;
-      });
+      reviewsToFilter = reviewsToFilter
+        .filter(function(item) {
+          return item.rating < 3;
+        })
+        .sort(function(a, b) {
+          return a.rating - b.rating;
+        });
       break;
     case Filter.POPULAR:
       reviewsToFilter.sort(function(a, b) {
@@ -126,12 +122,6 @@ var setFilterEnabled = function(filter) {
   var filteredReviews = getFilteredReviews(reviews, filter);
   renderReviews(filteredReviews);
 
-  var activeFilter = filtersContainer.querySelector('.' + ACTIVE_FILTER_CLASSNAME);
-  if (activeFilter) {
-    activeFilter.classList.remove(ACTIVE_FILTER_CLASSNAME);
-  }
-  var filterToActivate = document.getElementById(filter);
-  filterToActivate.classList.add(ACTIVE_FILTER_CLASSNAME);
 };
 
 /** @param {boolean} enabled */
@@ -154,7 +144,7 @@ var getReviews = function(callback) {
 
   /** @param {ProgressEvent} */
   xhr.onload = function(evt) {
-    var reviewsSection = document.querySelector('.reviews');
+    reviewsSection = document.querySelector('.reviews');
     var loadedData = JSON.parse(evt.target.response);
 
     callback(loadedData);
@@ -164,9 +154,11 @@ var getReviews = function(callback) {
     reviewsSection.classList.add('reviews-load-failure');
   };
 
-  xhr.loadend = function() {
+  function removePreloader() {
     reviewsSection.classList.remove('reviews-list-loading');
   }
+
+  setTimeout(removePreloader, PREALOADER_LOAD_TIMEOUT);
 
   xhr.open('GET', REVIEWS_LOAD_URL);
   xhr.send();
