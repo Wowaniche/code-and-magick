@@ -145,7 +145,14 @@ var getReviews = function(callback) {
   /** @param {ProgressEvent} */
   xhr.onload = function(evt) {
     reviewsSection = document.querySelector('.reviews');
-    var loadedData = JSON.parse(evt.target.response);
+    var loadedData;
+    try {
+      loadedData = JSON.parse(evt.target.response);
+    } catch (error) {
+      console.log('Ошибка в loadedData');
+      console.log(error);
+      loadedData = null;
+    }
 
     callback(loadedData);
   };
