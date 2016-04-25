@@ -13,7 +13,7 @@ if('content' in templateElement) {
 
 /** @constant {number} */
 var IMAGE_LOAD_TIMEOUT = 10000;
-var PREALOADER_LOAD_TIMEOUT = 5000;
+var PREALOADER_LOAD_TIMEOUT = 3000;
 
 /** @constant {string} */
 var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
@@ -21,6 +21,14 @@ var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
 /** @type {Array.<Object>} */
 var reviews = [];
 
+/** @type {Array.<Object>} */
+var filteredReviews = [];
+
+/** @constant {number} */
+var PAGE_SIZE = 3;
+
+/** type {number} */
+var pageNumber = 0;
 
 /** @enum {number} */
 var Filter = {
@@ -31,6 +39,8 @@ var Filter = {
   POPULAR: 'reviews-popular'
 };
 
+/** @constant {Filter} */
+var DEFAULT_FILTER = Filter.ALL;
 
 /**
  * @param {Object} data
@@ -69,10 +79,15 @@ var getReviewElement = function(data, container) {
 };
 
 /** @param {Array.<Object>} reviews */
-var renderReviews = function(reviews) {
-  reviewsContainer.innerHTML = '';
+var renderReviews = function(reviews, page, replace) {
+  if(replace) {
+    reviewsContainer.innerHTML = '';
+  }
 
-  reviews.forEach(function(review) {
+  var from = page * PAGE_SIZE;
+  var to = from + PAGE_SIZE;
+
+  reviews.slice(from, to).forEach(function(review) {
     getReviewElement(review, reviewsContainer);
   });
 };
@@ -119,22 +134,21 @@ var getFilteredReviews = function(reviews, filter) {
 };
 
 var setFilterEnabled = function(filter) {
-  var filteredReviews = getFilteredReviews(reviews, filter);
-  renderReviews(filteredReviews);
-
+  filteredReviews = getFilteredReviews(reviews, filter);
+  pageNumber = 0;
+  renderReviews(filteredReviews, pageNumber, true);
 };
 
 /** @param {boolean} enabled */
-var setFiltersEnabled = function(enabled) {
+var setFiltersEnabled = function() {
   var filterForm = document.querySelector('.reviews-filter');
   var filters = filterForm.querySelectorAll('input');
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onchange = enabled ? function(evt) {
-      setFilterEnabled(evt.target.value);
-    } : null;
-  }
+  filterForm.addEventListener('click', function(evt) {
+    if(filters) {
+      setFilterEnabled(evt.target.id);
+    }
+  });
 };
-setFiltersEnabled(true);
 
 /** @param {function(Array.<Object>)} callback */
 var getReviews = function(callback) {
@@ -145,7 +159,14 @@ var getReviews = function(callback) {
   /** @param {ProgressEvent} */
   xhr.onload = function(evt) {
     reviewsSection = document.querySelector('.reviews');
-    var loadedData = JSON.parse(evt.target.response);
+    var loadedData;
+    try {
+      loadedData = JSON.parse(evt.target.response);
+    } catch (error) {
+      console.log('Ошибка в loadedData');
+      console.log(error);
+      loadedData = null;
+    }
 
     callback(loadedData);
   };
@@ -164,8 +185,42 @@ var getReviews = function(callback) {
   xhr.send();
 };
 
+var isNextPageAvailable = function(reviews, page, pageSize) {
+  var moreMessageButton = document.querySelector('.reviews-controls-more');
+  moreMessageButton.classList.remove('invisible');
+  var filterForm = document.querySelector('.reviews-filter');
+  var filters = filterForm.querySelectorAll('input');
+
+  for (var i = 0; i < filters.length; i++) {
+    filters[i].onclick = function() {
+      moreMessageButton.classList.remove('invisible');
+    };
+  }
+
+  if(page === 4) {
+    moreMessageButton.classList.add('invisible');
+  }
+
+  return page < Math.floor(reviews.length / pageSize);
+};
+
+var setButtonEnabled = function() {
+  var moreMessageButton = document.querySelector('.reviews-controls-more');
+  moreMessageButton.classList.remove('invisible');
+
+  moreMessageButton.addEventListener('click', function() {
+    if(isNextPageAvailable(reviews, pageNumber, PAGE_SIZE)) {
+      pageNumber++;
+      renderReviews(filteredReviews, pageNumber);
+    }
+  });
+
+};
+
 getReviews(function(loadedReviews) {
   reviews = loadedReviews;
-  renderReviews(reviews);
+  setFiltersEnabled(true);
+  setFilterEnabled(DEFAULT_FILTER);
+  setButtonEnabled();
 });
 
