@@ -2,6 +2,54 @@
 
 (function() {
 
+  var headerClouds = document.querySelector('.header-clouds');
+  var current = 270;
+  var a, b = 0;
+  var scrollTimeout;
+
+  function isBottomReached() {
+    var GAP = 100;
+    var photogallery = document.querySelector('.photogallery');
+    var photogalleryPos = photogallery.getBoundingClientRect();
+    return photogalleryPos.bottom - window.innerHeight - GAP <= 0;
+  }
+
+  function moveLeftClouds() {
+    current -= 3;
+    if(current < 100) {
+      current = 100;
+    }
+
+    headerClouds.style.backgroundPosition = current + 'px';
+  }
+
+  function moveRightClouds() {
+    current += 6.5;
+    if(current > 280) {
+      current = 280;
+    }
+
+    headerClouds.style.backgroundPosition = current + 'px';
+  }
+
+  window.addEventListener('scroll', function() {
+    b = window.pageYOffset;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      if(isBottomReached()) {
+        game.setGameStatus(window.Game.Verdict.PAUSE);
+      }
+
+      if(a > b) {
+        moveRightClouds();
+      }
+
+      moveLeftClouds();
+      a = b;
+    }, 10);
+
+  });
+
   var messageVerdict = {
     win: 'Вы выиграли.Пробел для рестарта.',
     fail: 'Вы проиграли.Пробел для рестарта.',
@@ -727,4 +775,5 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
+
 })();
