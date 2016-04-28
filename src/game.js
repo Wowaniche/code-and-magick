@@ -1,55 +1,32 @@
 'use strict';
 
 (function() {
-
+  /**
+   * Облака
+   * @param {Element} header-clouds
+   */
   var headerClouds = document.querySelector('.header-clouds');
+
+  /**
+   * Положение облака backgroundPosition
+   * @type {number}
+   */
   var current = 270;
-  var a, b = 0;
+
+  /**
+   * Положение scroll по вертикали
+   * @type {number}
+   */
+  var down, up = 0;
+
+  /**
+   * @function
+   */
   var scrollTimeout;
 
-  function isBottomReached() {
-    var GAP = 100;
-    var photogallery = document.querySelector('.photogallery');
-    var photogalleryPos = photogallery.getBoundingClientRect();
-    return photogalleryPos.bottom - window.innerHeight - GAP <= 0;
-  }
-
-  function moveLeftClouds() {
-    current -= 3;
-    if(current < 100) {
-      current = 100;
-    }
-
-    headerClouds.style.backgroundPosition = current + 'px';
-  }
-
-  function moveRightClouds() {
-    current += 6.5;
-    if(current > 280) {
-      current = 280;
-    }
-
-    headerClouds.style.backgroundPosition = current + 'px';
-  }
-
-  window.addEventListener('scroll', function() {
-    b = window.pageYOffset;
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(function() {
-      if(isBottomReached()) {
-        game.setGameStatus(window.Game.Verdict.PAUSE);
-      }
-
-      if(a > b) {
-        moveRightClouds();
-      }
-
-      moveLeftClouds();
-      a = b;
-    }, 10);
-
-  });
-
+  /**
+   * @type {Object} Verdict
+   */
   var messageVerdict = {
     win: 'Вы выиграли.Пробел для рестарта.',
     fail: 'Вы проиграли.Пробел для рестарта.',
@@ -437,30 +414,30 @@
       * @param {number} coordinateY
       * @param {Canvas2DRenderingContext} ctx
       * @param {string} Verdict*/
-    _popMessage: function(coordinateX, coordinateY, ctx, Verdict) {
+    _popMessage: function(coordinateX, coordinateY, ctx, verdict) {
       ctx.fillStyle = 'white';
       ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(coordinateX * 180, coordinateY * 100 );
-      ctx.lineTo(coordinateX * 170, coordinateY * 200 );
-      ctx.lineTo(coordinateX * 560, coordinateY * 220 );
-      ctx.lineTo(coordinateX * 550, coordinateY * 90 );
+      ctx.moveTo(coordinateX * 180, coordinateY * 100);
+      ctx.lineTo(coordinateX * 170, coordinateY * 200);
+      ctx.lineTo(coordinateX * 560, coordinateY * 220);
+      ctx.lineTo(coordinateX * 550, coordinateY * 90);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
       ctx.font = '16px PT Mono';
       ctx.fillStyle = 'black';
-      switch (typeof Verdict === 'string') {
-        case Verdict === 'win':
+      switch (typeof verdict === 'string') {
+        case verdict === 'win':
           ctx.fillText(messageVerdict.win, 210, 150);
           break;
-        case Verdict === 'fail':
+        case verdict === 'fail':
           ctx.fillText(messageVerdict.fail, 210, 150);
           break;
-        case Verdict === 'pause':
+        case verdict === 'pause':
           ctx.fillText(messageVerdict.pause, 190, 150);
           break;
-        case Verdict === 'intro':
+        case verdict === 'intro':
           ctx.fillText(messageVerdict.intro, 210, 150);
           break;
       }
@@ -766,6 +743,31 @@
     _removeGameListeners: function() {
       window.removeEventListener('keydown', this._onKeyDown);
       window.removeEventListener('keyup', this._onKeyUp);
+    },
+
+    isBottomReached: function() {
+      var GAP = 100;
+      var photogallery = document.querySelector('.photogallery');
+      var photogalleryPos = photogallery.getBoundingClientRect();
+      return photogalleryPos.bottom - window.innerHeight - GAP <= 0;
+    },
+
+    moveLeftClouds: function() {
+      current -= 3;
+      if(current < 100) {
+        current = 100;
+      }
+
+      headerClouds.style.backgroundPosition = current + 'px';
+    },
+
+    moveRightClouds: function() {
+      current += 6.5;
+      if(current > 280) {
+        current = 280;
+      }
+
+      headerClouds.style.backgroundPosition = current + 'px';
     }
   };
 
@@ -775,5 +777,23 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
+
+  window.addEventListener('scroll', function() {
+    up = window.pageYOffset;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      if(game.isBottomReached()) {
+        game.setGameStatus(window.Game.Verdict.PAUSE);
+      }
+
+      if(down > up) {
+        game.moveRightClouds();
+      }
+
+      game.moveLeftClouds();
+      down = up;
+    }, 10);
+
+  });
 
 })();
