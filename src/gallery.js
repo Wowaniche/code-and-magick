@@ -31,7 +31,10 @@
 
   function toggleToLeft(number1) {
     overlayGalleryControlLeft.addEventListener('click', function() {
-      if(number1 > 0) {
+      if(number1 >= 0) {
+        if(number1 === 0) {
+          number1 = 6;
+        }
         number1--;
         preview.src = picturesGallery[number1];
         previewNumberCurrent.textContent = number1 + 1;
@@ -41,7 +44,10 @@
 
   function toggleToRight(number2) {
     overlayGalleryControlRight.addEventListener('click', function() {
-      if(number2 < 5) {
+      if(number2 <= 5) {
+        if(number2 === 5) {
+          number2 = -1;
+        }
         number2++;
         preview.src = picturesGallery[number2];
         previewNumberCurrent.textContent = number2 + 1;
@@ -61,6 +67,7 @@
 
     imgGallery[0].addEventListener('click', function() {
       preview.src = picturesGallery[0];
+      toggleToLeft(0);
       toggleToRight(0);
       previewNumberCurrent.textContent = '1';
     });
