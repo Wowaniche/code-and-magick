@@ -3,6 +3,9 @@
 var reviewsContainer = document.querySelector('.reviews-list');
 var reviewsSection = document.querySelector('.reviews');
 var templateElement = document.querySelector('template');
+var filterForm = document.querySelector('.reviews-filter');
+var filters = filterForm.querySelectorAll('input');
+var moreMessageButton = document.querySelector('.reviews-controls-more');
 var elementToClone;
 
 if('content' in templateElement) {
@@ -13,7 +16,6 @@ if('content' in templateElement) {
 
 /** @constant {number} */
 var IMAGE_LOAD_TIMEOUT = 10000;
-var PREALOADER_LOAD_TIMEOUT = 3000;
 
 /** @constant {string} */
 var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
@@ -30,7 +32,7 @@ var PAGE_SIZE = 3;
 /** type {number} */
 var pageNumber = 0;
 
-/** @enum {number} */
+/** @enum {string} */
 var Filter = {
   ALL: 'reviews-all',
   RECENT: 'reviews-recent',
@@ -141,8 +143,6 @@ var setFilterEnabled = function(filter) {
 
 /** @param {boolean} enabled */
 var setFiltersEnabled = function() {
-  var filterForm = document.querySelector('.reviews-filter');
-  var filters = filterForm.querySelectorAll('input');
   filterForm.addEventListener('click', function(evt) {
     if(filters) {
       setFilterEnabled(evt.target.id);
@@ -175,47 +175,42 @@ var getReviews = function(callback) {
     reviewsSection.classList.add('reviews-load-failure');
   };
 
-  function removePreloader() {
+  xhr.onloadend = function() {
     reviewsSection.classList.remove('reviews-list-loading');
-  }
-
-  setTimeout(removePreloader, PREALOADER_LOAD_TIMEOUT);
+  };
 
   xhr.open('GET', REVIEWS_LOAD_URL);
   xhr.send();
 };
 
 var isNextPageAvailable = function(reviews, page, pageSize) {
-  var moreMessageButton = document.querySelector('.reviews-controls-more');
-  moreMessageButton.classList.remove('invisible');
-  var filterForm = document.querySelector('.reviews-filter');
-  var filters = filterForm.querySelectorAll('input');
-
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onclick = function() {
-      moreMessageButton.classList.remove('invisible');
-    };
-  }
-
-  if(page === 4) {
-    moreMessageButton.classList.add('invisible');
-  }
-
   return page < Math.floor(reviews.length / pageSize);
 };
 
-var setButtonEnabled = function() {
-  var moreMessageButton = document.querySelector('.reviews-controls-more');
-  moreMessageButton.classList.remove('invisible');
+var makeVisibleButton = function(page) {
+  filterForm.onclick = function() {
+    for (var i = 0; i < filters.length; i++) {
+      moreMessageButton.classList.remove('invisible');
+    }
+  };
 
+  if(page >= 4) {
+    moreMessageButton.classList.add('invisible');
+  }
+};
+
+var setButtonEnabled = function() {
+  moreMessageButton.classList.remove('invisible');
   moreMessageButton.addEventListener('click', function() {
     if(isNextPageAvailable(reviews, pageNumber, PAGE_SIZE)) {
+      makeVisibleButton(pageNumber);
       pageNumber++;
       renderReviews(filteredReviews, pageNumber);
     }
   });
-
 };
+
+
 
 getReviews(function(loadedReviews) {
   reviews = loadedReviews;
