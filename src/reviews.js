@@ -2,20 +2,9 @@
 
 var reviewsContainer = document.querySelector('.reviews-list');
 var reviewsSection = document.querySelector('.reviews');
-var templateElement = document.querySelector('template');
 var filterForm = document.querySelector('.reviews-filter');
 var filters = filterForm.querySelectorAll('input');
 var moreMessageButton = document.querySelector('.reviews-controls-more');
-var elementToClone;
-
-if('content' in templateElement) {
-  elementToClone = templateElement.content.querySelector('.review');
-} else {
-  elementToClone = templateElement.querySelector('.review');
-}
-
-/** @constant {number} */
-var IMAGE_LOAD_TIMEOUT = 10000;
 
 /** @constant {string} */
 var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
@@ -44,53 +33,29 @@ var Filter = {
 /** @constant {Filter} */
 var DEFAULT_FILTER = Filter.ALL;
 
+var renderedReviews = [];
 /**
  * @param {Object} data
  * @param {HTMLElement} container
  * @return {HTMLElement}
  */
-var getReviewElement = function(data, container) {
-  var element = elementToClone.cloneNode(true);
-  element.querySelector('.review-text').textContent = data.description;
-  element.querySelector('.review-rating').textContent = data.rating;
-  container.appendChild(element);
-
-  var imageOfUser = new Image();
-  var imageOfUserLoadTimeOut;
-
-  imageOfUser.onload = function() {
-    clearTimeout(imageOfUserLoadTimeOut);
-    element.children[0].setAttribute('src', imageOfUser.src);
-    element.children[0].setAttribute('width', 124);
-    element.children[0].setAttribute('height', 124);
-  };
-
-  imageOfUser.onerror = function() {
-    element.classList.add('review-load-failure');
-  };
-
-  imageOfUser.src = data.author.picture;
-
-  imageOfUserLoadTimeOut = setTimeout(function() {
-    imageOfUser.src = '';
-    element.classList.add('review-nophoto');
-  }, IMAGE_LOAD_TIMEOUT);
-
-  container.appendChild(element);
-  return element;
-};
-
+var Review = require('./reviews-object.js');
 /** @param {Array.<Object>} reviews */
 var renderReviews = function(reviews, page, replace) {
   if(replace) {
-    reviewsContainer.innerHTML = '';
+    pageNumber = 0;
+    renderedReviews.forEach(function(review) {
+      review.remove();
+    });
+
+    renderedReviews = [];
   }
 
   var from = page * PAGE_SIZE;
   var to = from + PAGE_SIZE;
 
   reviews.slice(from, to).forEach(function(review) {
-    getReviewElement(review, reviewsContainer);
+    renderedReviews.push(new Review(review, reviewsContainer));
   });
 };
 
@@ -209,8 +174,6 @@ var setButtonEnabled = function() {
     }
   });
 };
-
-
 
 getReviews(function(loadedReviews) {
   reviews = loadedReviews;
