@@ -111,7 +111,7 @@ var setFiltersEnabled = function() {
   filterForm.addEventListener('click', function(evt) {
     if(filters) {
       setFilterEnabled(evt.target.id);
-      localStorage.setItem('filters', '\'' + evt.target.id + '\'');
+      localStorage.setItem('filter', '\'' + evt.target.id + '\'');
     }
   });
 };
