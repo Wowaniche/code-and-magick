@@ -112,6 +112,7 @@ var setFiltersEnabled = function() {
     if(filters) {
       setFilterEnabled(evt.target.id);
       localStorage.setItem('filters', '\'' + evt.target.id + '\'');
+      localStorage.getItem('filters');
     }
   });
 };
