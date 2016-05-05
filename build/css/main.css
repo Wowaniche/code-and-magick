@@ -530,8 +530,6 @@ input[type=radio]:checked + .review-mark-label {
   min-height: 300px;
 
   vertical-align: middle;
-
-  border: dotted 1px rgba(255, 255, 255, 0.2);
 }
 
 .overlay-gallery-preview-number {
