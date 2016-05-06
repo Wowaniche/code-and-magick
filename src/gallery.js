@@ -28,16 +28,11 @@ var Gallery = function() {
   ];
 
 // INIT
-  this.preloadImages = this.preloadImages.bind(this);
   this.bindEvents = this.bindEvents.bind(this);
   this.handleGalleryClick = this.handleGalleryClick.bind(this);
   this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
-  this.updateCounter = this.updateCounter.bind(this);
-  this.updateMainImage = this.updateMainImage.bind(this);
   this.openGallery = this.openGallery.bind(this);
-  this.preloadImages = this.preloadImages.bind(this);
-  this.makeVisible = this.makeVisible.bind(this);
-  this.makeInvisible = this.makeInvisible.bind(this);
+  this.closeGallery = this.closeGallery.bind(this);
   this.moveToRight = this.moveToRight.bind(this);
   this.moveToLeft = this.moveToLeft.bind(this);
 };
