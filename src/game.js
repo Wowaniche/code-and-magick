@@ -389,7 +389,7 @@
       * @param {number} coordinateY
       * @param {Canvas2DRenderingContext} ctx
       * @param {string} Verdict*/
-    _popMessage: function(coordinateX, coordinateY, ctx, Verdict) {
+    _popMessage: function(coordinateX, coordinateY, ctx, verdict) {
       ctx.fillStyle = 'white';
       ctx.lineWidth = 5;
       ctx.beginPath();
@@ -402,17 +402,17 @@
       ctx.stroke();
       ctx.font = '16px PT Mono';
       ctx.fillStyle = 'black';
-      switch (typeof Verdict === 'string') {
-        case Verdict === 'win':
+      switch (typeof verdict === 'string') {
+        case verdict === 'win':
           ctx.fillText(messageVerdict.win, 210, 150);
           break;
-        case Verdict === 'fail':
+        case verdict === 'fail':
           ctx.fillText(messageVerdict.fail, 210, 150);
           break;
-        case Verdict === 'pause':
+        case verdict === 'pause':
           ctx.fillText(messageVerdict.pause, 190, 150);
           break;
-        case Verdict === 'intro':
+        case verdict === 'intro':
           ctx.fillText(messageVerdict.intro, 210, 150);
           break;
       }
