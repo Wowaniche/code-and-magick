@@ -13,7 +13,6 @@ if('content' in templateElement) {
 
 /** @constant {number} */
 var IMAGE_LOAD_TIMEOUT = 10000;
-var PREALOADER_LOAD_TIMEOUT = 5000;
 
 /** @constant {string} */
 var REVIEWS_LOAD_URL = '//o0.github.io/assets/json/reviews.json';
@@ -69,10 +68,10 @@ var getReviewElement = function(data, container) {
 };
 
 /** @param {Array.<Object>} reviews */
-var renderReviews = function(reviews) {
+var renderReviews = function(reViews) {
   reviewsContainer.innerHTML = '';
 
-  reviews.forEach(function(review) {
+  reViews.forEach(function(review) {
     getReviewElement(review, reviewsContainer);
   });
 };
@@ -81,7 +80,7 @@ var renderReviews = function(reviews) {
  * @param {Array.<Object>} reviews
  * @param {string} filter
  */
-var getFilteredReviews = function(reviews, filter) {
+var getFilteredReviews = function(reViews, filter) {
   var reviewsToFilter = reviews.slice(0);
 
   switch(filter) {
@@ -161,11 +160,9 @@ var getReviews = function(callback) {
     reviewsSection.classList.add('reviews-load-failure');
   };
 
-  function removePreloader() {
+  xhr.onloadend = function() {
     reviewsSection.classList.remove('reviews-list-loading');
-  }
-
-  setTimeout(removePreloader, PREALOADER_LOAD_TIMEOUT);
+  };
 
   xhr.open('GET', REVIEWS_LOAD_URL);
   xhr.send();

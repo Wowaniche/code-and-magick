@@ -3,8 +3,8 @@
 (function() {
 
   var messageVerdict = {
-    win:   'Вы выиграли.Пробел для рестарта.',
-    fail:  'Вы проиграли.Пробел для рестарта.', 
+    win: 'Вы выиграли.Пробел для рестарта.',
+    fail: 'Вы проиграли.Пробел для рестарта.',
     pause: 'Пауза.Нажмите пробел для продолжения.',
     intro: 'Для начала игры нажмите пробел.'
   };
@@ -388,34 +388,34 @@
       * @param {number} coordinateX
       * @param {number} coordinateY
       * @param {Canvas2DRenderingContext} ctx
-      * @param {string} Verdict  
-      */ 
-    _popMessage: function(coordinateX, coordinateY, ctx, Verdict) {
+      * @param {string} Verdict
+      */
+    _popMessage: function(coordinateX, coordinateY, ctx, verdict) {
       ctx.fillStyle = 'white';
       ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(coordinateX*180, coordinateY*100 );
-      ctx.lineTo(coordinateX*170, coordinateY*200 );
-      ctx.lineTo(coordinateX*560, coordinateY*220 );
-      ctx.lineTo(coordinateX*550, coordinateY*90 );
+      ctx.moveTo(coordinateX * 180, coordinateY * 100);
+      ctx.lineTo(coordinateX * 170, coordinateY * 200);
+      ctx.lineTo(coordinateX * 560, coordinateY * 220);
+      ctx.lineTo(coordinateX * 550, coordinateY * 90);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
       ctx.font = '16px PT Mono';
       ctx.fillStyle = 'black';
-      switch (typeof Verdict === 'string') {
-        case Verdict == 'win': 
-          ctx.fillText(messageVerdict.win, 210, 150)
+      switch (typeof verdict === 'string') {
+        case verdict === 'win':
+          ctx.fillText(messageVerdict.win, 210, 150);
           break;
-        case Verdict == 'fail':
-          ctx.fillText(messageVerdict.fail, 210, 150)
+        case verdict === 'fail':
+          ctx.fillText(messageVerdict.fail, 210, 150);
           break;
-        case Verdict == 'pause':
-          ctx.fillText(messageVerdict.pause, 190, 150)
+        case verdict === 'pause':
+          ctx.fillText(messageVerdict.pause, 190, 150);
           break;
-        case Verdict == 'intro':
-          ctx.fillText(messageVerdict.intro, 210, 150)
-          break; 
+        case verdict === 'intro':
+          ctx.fillText(messageVerdict.intro, 210, 150);
+          break;
       }
     },
     /**
