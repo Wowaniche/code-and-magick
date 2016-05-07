@@ -27,16 +27,19 @@ var Gallery = function() {
     'img/screenshots/6.png'
   ];
 
-// INIT
   this.bindEvents = this.bindEvents.bind(this);
   this.handleGalleryClick = this.handleGalleryClick.bind(this);
   this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
+  this.updateMainImage = this.updateMainImage.bind(this);
   this.openGallery = this.openGallery.bind(this);
   this.closeGallery = this.closeGallery.bind(this);
   this.moveToRight = this.moveToRight.bind(this);
   this.moveToLeft = this.moveToLeft.bind(this);
+  // INIT
+  this.preloadImages();
+  this.bindEvents();
 };
-// INIT
+
 Gallery.prototype.bindEvents = function() {
   this.photogalleryNode.addEventListener('click', this.handleGalleryClick);
 };
@@ -47,7 +50,7 @@ Gallery.prototype.handleGalleryClick = function(e) {
 
   this.link = e.target;
   this.index = this.link.getAttribute('data-index');
-
+  this.checkHash();
   this.openGallery(this.index);
 };
 
@@ -64,17 +67,22 @@ Gallery.prototype.updateCounter = function(index) {
 
 Gallery.prototype.updateMainImage = function(index) {
   this.src = this.picturesArray[index - 1];
-
   this.img.src = this.src;
+  location.hash = '#photo/' + this.picturesArray[index - 1];
+};
+
+Gallery.prototype.checkHash = function() {
+  this.regExp = /#photo\/(\S+)/;
+  location.hash.match(this.regExp) ? this.openGallery() : false;
 };
 
 Gallery.prototype.openGallery = function() {
   this.closeNode.addEventListener('click', this.closeGallery);
   this.controlLeftNode.addEventListener('click', this.moveToLeft);
   this.controlRightNode.addEventListener('click', this.moveToRight);
-  this.document.addEventListener('keydown', this.handleDocumentKeyDown);
-  this.document.addEventListener('keyup', this.handleDocumentKeyDown);
-
+  document.addEventListener('keydown', this.handleDocumentKeyDown);
+  document.addEventListener('keyup', this.handleDocumentKeyDown);
+  window.addEventListener('hashchange', this.rememberHash);
   this.updateMainImage(this.index);
   this.updateCounter(this.index);
   this.makeVisible();
@@ -84,9 +92,8 @@ Gallery.prototype.closeGallery = function() {
   this.closeNode.removeEventListener('click', this.closeGallery);
   this.controlRightNode.removeEventListener('click', this.moveToRight);
   this.controlLeftNode.removeEventListener('click', this.moveToLeft);
-  this.document.removeEventListener('keydown', this.handleDocumentKeyDown);
-  this.document.removeEventListener('keyup', this.handleDocumentKeyDown);
-
+  document.removeEventListener('keydown', this.handleDocumentKeyDown);
+  document.removeEventListener('keyup', this.handleDocumentKeyDown);
   this.updateMainImage();
   this.makeInvisible();
 };
@@ -105,6 +112,7 @@ Gallery.prototype.makeVisible = function() {
 
 Gallery.prototype.makeInvisible = function() {
   this.rootNode.classList.add('invisible');
+  location.hash = '';
 };
 
 Gallery.prototype.moveToRight = function() {
@@ -128,5 +136,6 @@ Gallery.prototype.moveToLeft = function() {
   this.updateMainImage(this.current + 1);
   this.updateCounter(this.current + 1);
 };
+
 
 module.exports = new Gallery();
