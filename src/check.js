@@ -1,9 +1,11 @@
+'use strict';
+
 var messages = {
-  miss:   'Я никуда не попал',
-  hit:    'Я попал в {b}',
+  miss: 'Я никуда не попал',
+  hit: 'Я попал в {b}',
   jumped: 'Я прыгнул на {value} сантиметров',
-  sum:    'Я прошёл {meter} шагов',
-  step:   'Я прошёл {pace} метров'
+  sum: 'Я прошёл {meter} шагов',
+  step: 'Я прошёл {pace} метров'
 };
 
 function getMessage(a, b) {
@@ -14,9 +16,9 @@ function getMessage(a, b) {
       return messages.miss;
     }
   }
-  
-  if (isNumber(a)) { 
-    return messages.jumped.replace('{value}', a*100);
+
+  if (isNumber(a)) {
+    return messages.jumped.replace('{value}', a * 100);
   }
 
   if (Array.isArray(a)) {
@@ -26,6 +28,8 @@ function getMessage(a, b) {
 
     return messages.sum.replace('{meter}', calcSumOfItems(a));
   }
+
+  return true;
 }
 
 function isNumber(a) {
@@ -40,9 +44,10 @@ function calcSumOfItems(a) {
 
 function calcSumOfMultiply(a, b) {
   var multiply = 0;
-  for (i = 0; i < a.length; i++) {
-    multiply += a[i]*b[i];
+  for (var i = 0; i < a.length; i++) {
+    multiply += a[i] * b[i];
   }
+
   return multiply;
 }
 

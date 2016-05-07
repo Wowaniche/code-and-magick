@@ -7,15 +7,15 @@
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formCloseButton = document.querySelector('.review-form-close');
   var formFieldName = document.querySelector('.review-form-field-name');
-  var formReviewMarkOne = document.querySelector('.review-mark-label-1');
-  var formReviewMarkTwo = document.querySelector('.review-mark-label-2');
-  var formReviewMarkThree = document.querySelector('.review-mark-label-3');
-  var formReviewMarkFour = document.querySelector('.review-mark-label-4');
-  var formReviewMarkFive = document.querySelector('.review-mark-label-5');
   var formFieldText = document.querySelector('.review-form-field-text');
   var formReviewFieldsName = document.querySelector('.review-fields-name');
   var formReviewFieldsText = document.querySelector('.review-fields-text');
   var formReviewSubmit = document.querySelector('.review-submit');
+  var fieldsetReview = document.querySelector('.review-form-group-mark');
+  var inputReviewMark = fieldsetReview.querySelectorAll('input');
+
+  formFieldName.value = cookies.get('name') || '';
+  formFieldText.value = cookies.get('text') || '';
 
   formOpenButton.onclick = function() {
     formContainer.classList.remove('invisible');
@@ -30,41 +30,31 @@
     formFieldName.classList.add('require');
   }
 
-  formReviewMarkOne.onclick = function() {
-    formFieldText.classList.add('require');
-  };
+  for (var i = 0; i < 2; i++) {
+    inputReviewMark[i].onclick = function() {
+      formFieldText.classList.add('require');
+    };
+  }
 
-  formReviewMarkTwo.onclick = function() {
-    formFieldText.classList.add('require');
-  };
-
-  formReviewMarkThree.onclick = function() {
-    formFieldText.classList.remove('require');
-  };
-
-  formReviewMarkFour.onclick = function() {
-    formFieldText.classList.remove('require');
-  };
-
-  formReviewMarkFive.onclick = function() {
-    formFieldText.classList.remove('require');
-  };
+  for (i = 2; i < 5; i++) {
+    inputReviewMark[i].onclick = function() {
+      formFieldText.classList.remove('require');
+    };
+  }
 
   function checkRemainedRequiredFields() {
     var name = formFieldName.value;
     var text = formFieldText.value;
-    var isNameValid = name === '';
-    var isTextValid = text === '';
 
-    if (!isNameValid) {
+    if (!(name === '')) {
       formReviewFieldsName.setAttribute('hidden', true);
     }
 
-    if (!isTextValid) {
+    if (!(text === '')) {
       formReviewFieldsText.setAttribute('hidden', true);
     }
 
-    if (isNameValid && isTextValid) {
+    if (name === '' && text === '') {
       formReviewFieldsName.removeAttribute('hidden', true);
       formReviewFieldsText.removeAttribute('hidden', true);
     }
@@ -73,31 +63,25 @@
   function addDisabledOnSubmit() {
     var name = formFieldName.value;
     var text = formFieldText.value;
-    var isNameInValid = name === '';
-    var isTextInValid = text === '';
 
-    if (isNameInValid) {
+    if (!name) {
       formReviewSubmit.setAttribute('disabled', true);
     } else {
       formReviewSubmit.removeAttribute('disabled', true);
     }
 
-    if (isTextInValid) {
-      formReviewMarkOne.onclick = function() {
-        formReviewSubmit.setAttribute('disabled', true);
-      };
-      formReviewMarkTwo.onclick = function() {
-        formReviewSubmit.setAttribute('disabled', true);
-      };
-      formReviewMarkThree.onclick = function() {
-        formReviewSubmit.removeAttribute('disabled', true);
-      };
-      formReviewMarkFour.onclick = function() {
-        formReviewSubmit.removeAttribute('disabled', true);
-      };
-      formReviewMarkFive.onclick = function() {
-        formReviewSubmit.removeAttribute('disabled', true);
-      };
+    if (!text) {
+      for (i = 0; i < 2; i++) {
+        inputReviewMark[i].onclick = function() {
+          formReviewSubmit.setAttribute('disabled', true);
+        };
+      }
+
+      for (i = 2; i < 5; i++) {
+        inputReviewMark[i].onclick = function() {
+          formReviewSubmit.removeAttribute('disabled', true);
+        };
+      }
     }
   }
 
@@ -115,21 +99,15 @@
     var name = formFieldName.value;
     var text = formFieldText.value;
 
-    formReviewMarkOne.onclick = function() {
-      if(!text) {
-        return false;
-      } else {
-        return true;
-      }
-    };
-
-    formReviewMarkTwo.onclick = function() {
-      if(!text) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+    for (i = 0; i < 2; i++) {
+      inputReviewMark[i].onclick = function() {
+        if(!text) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+    }
 
     if(!name) {
       return false;
@@ -147,22 +125,24 @@
   }
 
   function setCookie() {
-    var text = cookies.get('text') || formFieldText.value;
-    var name = cookies.get('name') || formFieldName.value;
     var expiresTime = Date.now() + calcDayToTheBirthday();
 
-    cookies.set('text', text, {
+    cookies.set('name', formFieldName.value, {
       expires: expiresTime
     });
-    cookies.set('name', name, {
+
+    cookies.set('text', formFieldText.value, {
       expires: expiresTime
     });
   }
 
   formReviewSubmit.onsubmit = function() {
-    isValidForm();
-    setCookie();
-
-    this.submit();
+    if(!isValidForm()) {
+      return false;
+    } else {
+      setCookie();
+      this.submit();
+      return true;
+    }
   };
 })();
