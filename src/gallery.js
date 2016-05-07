@@ -27,7 +27,7 @@ var Gallery = function() {
     'img/screenshots/6.png'
   ];
 
-
+  this.bindEvents = this.bindEvents.bind(this);
   this.handleGalleryClick = this.handleGalleryClick.bind(this);
   this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
   this.updateMainImage = this.updateMainImage.bind(this);
