@@ -73,7 +73,7 @@ Gallery.prototype.updateMainImage = function(index) {
 
 Gallery.prototype.checkHash = function() {
   this.regExp = /#photo\/(\S+)/;
-  location.hash.match(this.regExp) ? this.openGallery() : false;
+  this.location = location.hash.match(this.regExp) ? this.openGallery() : false;
 };
 
 Gallery.prototype.openGallery = function() {
