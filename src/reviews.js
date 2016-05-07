@@ -41,7 +41,7 @@ var renderedReviews = [];
  */
 var Review = require('./reviews-object.js');
 /** @param {Array.<Object>} reviews */
-var renderReviews = function(reviews, page, replace) {
+var renderReviews = function(reViews, page, replace) {
   if(replace) {
     pageNumber = 0;
     renderedReviews.forEach(function(review) {
@@ -54,7 +54,7 @@ var renderReviews = function(reviews, page, replace) {
   var from = page * PAGE_SIZE;
   var to = from + PAGE_SIZE;
 
-  reviews.slice(from, to).forEach(function(review) {
+  reViews.slice(from, to).forEach(function(review) {
     renderedReviews.push(new Review(review, reviewsContainer));
   });
 };
@@ -63,7 +63,7 @@ var renderReviews = function(reviews, page, replace) {
  * @param {Array.<Object>} reviews
  * @param {string} filter
  */
-var getFilteredReviews = function(reviews, filter) {
+var getFilteredReviews = function(reViews, filter) {
   var reviewsToFilter = reviews.slice(0);
 
   switch(filter) {
@@ -148,7 +148,7 @@ var getReviews = function(callback) {
   xhr.send();
 };
 
-var isNextPageAvailable = function(reviews, page, pageSize) {
+var isNextPageAvailable = function(reViews, page, pageSize) {
   return page < Math.floor(reviews.length / pageSize);
 };
 
